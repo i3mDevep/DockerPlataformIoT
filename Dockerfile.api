@@ -1,0 +1,19 @@
+FROM node:12
+
+WORKDIR /usr/src/apps/iot-utils
+COPY ./iot-utils/package*.json ./
+RUN npm install
+COPY ./iot-utils .
+
+WORKDIR /usr/src/apps/iot_db
+COPY ./iot_db/package*.json ./
+RUN npm install
+COPY ./iot_db .
+
+WORKDIR /usr/src/apps/iot_api
+COPY ./iot_api/package*.json ./
+RUN npm install
+COPY ./iot_api .
+EXPOSE 3000
+CMD [ "npm", "run", "start-dev" ]
+

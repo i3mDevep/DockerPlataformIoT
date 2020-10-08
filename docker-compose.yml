@@ -1,0 +1,76 @@
+version: "3.8"
+
+services:
+  agent:
+    build: 
+      context: .
+      dockerfile: Dockerfile.agent
+    depends_on: 
+      - broker
+      - db
+      - api
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile.web
+    ports: 
+      - "8080:8080"
+    depends_on: 
+      - broker
+      - api
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on: 
+      - db
+    volumes: 
+      - ./iot_api:/usr/src/apps/iot_api
+      - /usr/src/apps/iot_api/node_modules
+
+  react:
+    stdin_open: true
+    build:
+      context: .
+      dockerfile: Dockerfile.react
+    ports:
+      - "8081:8080"
+    depends_on: 
+      - api
+      - broker
+    volumes: 
+      - ./iot_web/client:/usr/src/apps/iot_web/client
+      - /usr/src/apps/iot_web/client/node_modules
+   
+  broker:
+    build: 
+      context: .
+      dockerfile: Dockerfile.mqtt
+    ports:
+      - "1883:1883"
+    depends_on: 
+      - redis
+
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'plataformIoT'
+      MYSQL_ROOT_PASSWORD: 'developer'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - my-db:/var/lib/mysql
+  
+  redis:
+    image: "redis"
+
+
+volumes:
+  my-db:

@@ -1,0 +1,8 @@
+FROM node:12
+
+WORKDIR /usr/src/apps/iot_web/client
+COPY ./iot_web/client/package*.json ./
+RUN npm install
+COPY ./iot_web/client .
+EXPOSE 8080
+CMD [ "npm", "run", "start" ]

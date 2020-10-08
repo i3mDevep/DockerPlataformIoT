@@ -1,0 +1,15 @@
+FROM node:12
+
+WORKDIR /usr/src/apps/iot-utils
+COPY ./iot-utils/package*.json ./
+RUN npm install
+COPY ./iot-utils .
+
+WORKDIR /usr/src/apps/iot_agent
+COPY ./iot_agent/package*.json ./
+RUN npm install
+COPY ./iot_agent .
+
+WORKDIR /usr/src/apps/iot_agent/example
+
+CMD [ "node", "index.js" ]

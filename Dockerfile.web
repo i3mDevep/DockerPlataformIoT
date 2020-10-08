@@ -1,0 +1,21 @@
+FROM node:12
+
+WORKDIR /usr/src/apps/iot-utils
+COPY ./iot-utils/package*.json ./
+RUN npm install
+COPY ./iot-utils .
+
+WORKDIR /usr/src/apps/iot_agent
+COPY ./iot_agent/package*.json ./
+RUN npm install
+RUN npm install mqtt -g
+COPY ./iot_agent .
+RUN cd example && node index.js
+
+WORKDIR /usr/src/apps/iot_web
+COPY ./iot_web/package*.json ./
+RUN npm install
+COPY ./iot_web .
+EXPOSE 8080 
+CMD [ "npm", "run", "start-dev" ]
+
